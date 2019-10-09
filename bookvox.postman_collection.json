@@ -14,7 +14,7 @@
 						"id": "e0c231a8-4a81-4212-a5b3-2f8409139d1b",
 						"exec": [
 							"var data = pm.response.json();\r",
-							"pm.variables.set(\"token\", data.token);"
+							"pm.environment.set(\"token\", data.token);"
 						],
 						"type": "text/javascript"
 					}

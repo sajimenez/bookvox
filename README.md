@@ -38,4 +38,9 @@ Find information about your favorite books
     python manage.py runserver
     ```
 
-8. You are ready to consume our webservices!
+8. Create a test user, for example:
+    ```
+    python manage.py createsuperuser
+    ```
+
+9. You are ready to consume our webservices!
