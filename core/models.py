@@ -5,6 +5,11 @@ class Category(models.Model):
     """Model representing a book category"""
     name = models.CharField(max_length=255, unique=True)
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['name']),
+        ]
+
     def __str__(self):
         """String for representing the Model object."""
         return self.name
@@ -23,6 +28,11 @@ class Book(models.Model):
     stock = models.BooleanField()
     product_description = models.TextField(null=True)
     upc = models.CharField(max_length=255, unique=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['upc']),
+        ]
 
     def __str__(self):
         """String for representing the Model object."""

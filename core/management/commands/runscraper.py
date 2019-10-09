@@ -12,13 +12,17 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         page = requests.get(BASE_URL+'index.html')
-        soup_index = BeautifulSoup(page.text, 'html.parser')
+        soup_index = BeautifulSoup(
+            page.content.decode('utf-8', 'ignore'),
+            'lxml'
+        )
 
         categories = soup_index.find(class_='nav nav-list').find(
             'ul').find_all('a')
-
+        # Loop over category links in the side bar
         for c in categories:
             name = c.contents[0].strip()
+            # Create category if doesn't exists in db
             category, created = Category.objects.get_or_create(name=name)
             category_link = BASE_URL + c.get('href')
             if created:
@@ -27,9 +31,12 @@ class Command(BaseCommand):
                 )
 
             page = requests.get(category_link)
-            soup_category = BeautifulSoup(page.text, 'html.parser')
+            soup_category = BeautifulSoup(page.content.decode(
+                'utf-8', 'ignore'),
+                'lxml'
+            )
             has_next = True
-
+            # While loop added for pagination scenario
             while(has_next):
                 books = soup_category.find(
                     'ol', {'class': 'row'}).find_all('h3')
@@ -38,7 +45,9 @@ class Command(BaseCommand):
                         '../../../', BASE_URL+'catalogue/'
                     )
                     page = requests.get(book_link)
-                    soup = BeautifulSoup(page.text, 'html.parser')
+                    soup = BeautifulSoup(page.content.decode(
+                        'utf-8', 'ignore'), 'lxml'
+                    )
 
                     description_div = soup.find(
                             'div', {"id": "product_description"}
@@ -66,7 +75,7 @@ class Command(BaseCommand):
                             'td'
                         ).contents[0].strip(),
                     }
-
+                    # Update book info if exits in db, otherwise create
                     book, created = Book.objects.update_or_create(
                         upc=defaults['upc'],
                         defaults=defaults
@@ -84,7 +93,7 @@ class Command(BaseCommand):
                                 f'Updated book {book.title}'
                             )
                         )
-
+                # Check if there is a pagination next link
                 a_next = soup_category.find('a', text='next')
                 has_next = a_next is not None
                 if has_next:
@@ -93,4 +102,7 @@ class Command(BaseCommand):
                         a_next.get('href')
                     )
                     page = requests.get(link)
-                    soup_category = BeautifulSoup(page.text, 'html.parser')
+                    soup_category = BeautifulSoup(
+                        page.content.decode('utf-8', 'ignore'),
+                        'lxml'
+                    )
