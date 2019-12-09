@@ -1,0 +1,17 @@
+.git
+.gitignore
+.dockerignore
+Dockerfile
+docker-compose.yml
+.vscode
+README.md
+bookvox.postman_collection.json
+*.pyc
+*.pyo
+*.pyd
+__pycache__
+db.sqlite3
+venv
+.env
+kubernetes
+cloud_sql_proxy
